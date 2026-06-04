@@ -26,7 +26,8 @@ class VoidRequest extends AbstractRequest
     public function sendData($data): Response|ErrorResponse
     {
         try {
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getPaymentsController()
                 ->voidPayment([
                     'authorizationId' => $data['authorizationId'],

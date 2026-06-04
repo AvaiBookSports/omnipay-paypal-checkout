@@ -116,16 +116,18 @@ class CompletePurchaseRequestTest extends TestCase
     public function testSendDataApiError(): void
     {
         $ordersController = $this->createMock(OrdersController::class);
-        $ordersController->method('captureOrder')->willThrowException(
-            new ErrorException(
-                'ORDER_NOT_APPROVED',
-                new HttpRequest('POST'),
-                new HttpResponse(422, [], ''),
-                'ORDER_NOT_APPROVED',
-                'ORDER_NOT_APPROVED',
-                'debug-id',
-            ),
-        );
+        $ordersController
+            ->method('captureOrder')
+            ->willThrowException(
+                new ErrorException(
+                    'ORDER_NOT_APPROVED',
+                    new HttpRequest('POST'),
+                    new HttpResponse(422, [], ''),
+                    'ORDER_NOT_APPROVED',
+                    'ORDER_NOT_APPROVED',
+                    'debug-id',
+                ),
+            );
 
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);

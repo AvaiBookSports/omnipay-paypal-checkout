@@ -73,16 +73,18 @@ class VoidRequestTest extends TestCase
     public function testSendDataApiError(): void
     {
         $paymentsController = $this->createMock(PaymentsController::class);
-        $paymentsController->method('voidPayment')->willThrowException(
-            new ErrorException(
-                'AUTHORIZATION_ALREADY_CAPTURED',
-                new HttpRequest('POST'),
-                new HttpResponse(422, [], ''),
-                'AUTHORIZATION_ALREADY_CAPTURED',
-                'AUTHORIZATION_ALREADY_CAPTURED',
-                'debug-id',
-            ),
-        );
+        $paymentsController
+            ->method('voidPayment')
+            ->willThrowException(
+                new ErrorException(
+                    'AUTHORIZATION_ALREADY_CAPTURED',
+                    new HttpRequest('POST'),
+                    new HttpResponse(422, [], ''),
+                    'AUTHORIZATION_ALREADY_CAPTURED',
+                    'AUTHORIZATION_ALREADY_CAPTURED',
+                    'debug-id',
+                ),
+            );
 
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);

@@ -26,7 +26,8 @@ class CompletePurchaseRequest extends AbstractRequest
     public function sendData($data): Response|ErrorResponse
     {
         try {
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getOrdersController()
                 ->captureOrder(['id' => $data['orderId'], 'prefer' => 'return=representation']);
 

@@ -54,7 +54,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
                 ClientCredentialsAuthCredentialsBuilder::init(
                     $this->getClientId(),
                     $this->getClientSecret(),
-                )
+                ),
             )
             ->environment($this->getTestMode() ? Environment::SANDBOX : Environment::PRODUCTION)
             ->build();

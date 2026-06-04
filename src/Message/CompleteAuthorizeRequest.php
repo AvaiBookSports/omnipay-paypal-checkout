@@ -27,7 +27,8 @@ class CompleteAuthorizeRequest extends AbstractRequest
     public function sendData($data): Response|ErrorResponse
     {
         try {
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getOrdersController()
                 ->authorizeOrder(['id' => $data['orderId'], 'prefer' => 'return=representation']);
 

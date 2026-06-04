@@ -26,7 +26,8 @@ class FetchTransactionRequest extends AbstractRequest
     public function sendData($data): Response|ErrorResponse
     {
         try {
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getOrdersController()
                 ->getOrder(['id' => $data['orderId']]);
 

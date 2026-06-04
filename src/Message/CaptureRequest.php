@@ -41,7 +41,8 @@ class CaptureRequest extends AbstractRequest
                 $options['body'] = $body;
             }
 
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getPaymentsController()
                 ->captureAuthorizedPayment($options);
 

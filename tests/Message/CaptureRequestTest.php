@@ -92,16 +92,18 @@ class CaptureRequestTest extends TestCase
     public function testSendDataApiError(): void
     {
         $paymentsController = $this->createMock(PaymentsController::class);
-        $paymentsController->method('captureAuthorizedPayment')->willThrowException(
-            new ErrorException(
-                'AUTHORIZATION_VOIDED',
-                new HttpRequest('POST'),
-                new HttpResponse(422, [], ''),
-                'AUTHORIZATION_VOIDED',
-                'AUTHORIZATION_VOIDED',
-                'debug-id',
-            ),
-        );
+        $paymentsController
+            ->method('captureAuthorizedPayment')
+            ->willThrowException(
+                new ErrorException(
+                    'AUTHORIZATION_VOIDED',
+                    new HttpRequest('POST'),
+                    new HttpResponse(422, [], ''),
+                    'AUTHORIZATION_VOIDED',
+                    'AUTHORIZATION_VOIDED',
+                    'debug-id',
+                ),
+            );
 
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);

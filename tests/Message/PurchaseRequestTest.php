@@ -134,16 +134,18 @@ class PurchaseRequestTest extends TestCase
     public function testSendDataApiError(): void
     {
         $ordersController = $this->createMock(OrdersController::class);
-        $ordersController->method('createOrder')->willThrowException(
-            new ErrorException(
-                'INVALID_REQUEST',
-                new HttpRequest('POST'),
-                new HttpResponse(400, [], ''),
-                'INVALID_REQUEST',
-                'INVALID_REQUEST',
-                'debug-id',
-            ),
-        );
+        $ordersController
+            ->method('createOrder')
+            ->willThrowException(
+                new ErrorException(
+                    'INVALID_REQUEST',
+                    new HttpRequest('POST'),
+                    new HttpResponse(400, [], ''),
+                    'INVALID_REQUEST',
+                    'INVALID_REQUEST',
+                    'debug-id',
+                ),
+            );
 
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);

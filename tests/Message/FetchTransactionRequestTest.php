@@ -83,16 +83,18 @@ class FetchTransactionRequestTest extends TestCase
     public function testSendDataApiError(): void
     {
         $ordersController = $this->createMock(OrdersController::class);
-        $ordersController->method('getOrder')->willThrowException(
-            new ErrorException(
-                'RESOURCE_NOT_FOUND',
-                new HttpRequest('GET'),
-                new HttpResponse(404, [], ''),
-                'RESOURCE_NOT_FOUND',
-                'RESOURCE_NOT_FOUND',
-                'debug-id',
-            ),
-        );
+        $ordersController
+            ->method('getOrder')
+            ->willThrowException(
+                new ErrorException(
+                    'RESOURCE_NOT_FOUND',
+                    new HttpRequest('GET'),
+                    new HttpResponse(404, [], ''),
+                    'RESOURCE_NOT_FOUND',
+                    'RESOURCE_NOT_FOUND',
+                    'debug-id',
+                ),
+            );
 
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);

@@ -41,7 +41,8 @@ class RefundRequest extends AbstractRequest
                 $options['body'] = $body;
             }
 
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getPaymentsController()
                 ->refundCapturedPayment($options);
 

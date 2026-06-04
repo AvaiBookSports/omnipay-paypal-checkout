@@ -82,7 +82,8 @@ class PurchaseRequest extends AbstractRequest
         $orderRequest->setPaymentSource($paymentSource);
 
         try {
-            $apiResponse = $this->getSdkClient()
+            $apiResponse = $this
+                ->getSdkClient()
                 ->getOrdersController()
                 ->createOrder(['body' => $orderRequest, 'prefer' => 'return=representation']);
 

@@ -92,16 +92,18 @@ class RefundRequestTest extends TestCase
     public function testSendDataApiError(): void
     {
         $paymentsController = $this->createMock(PaymentsController::class);
-        $paymentsController->method('refundCapturedPayment')->willThrowException(
-            new ErrorException(
-                'CAPTURE_FULLY_REFUNDED',
-                new HttpRequest('POST'),
-                new HttpResponse(422, [], ''),
-                'CAPTURE_FULLY_REFUNDED',
-                'CAPTURE_FULLY_REFUNDED',
-                'debug-id',
-            ),
-        );
+        $paymentsController
+            ->method('refundCapturedPayment')
+            ->willThrowException(
+                new ErrorException(
+                    'CAPTURE_FULLY_REFUNDED',
+                    new HttpRequest('POST'),
+                    new HttpResponse(422, [], ''),
+                    'CAPTURE_FULLY_REFUNDED',
+                    'CAPTURE_FULLY_REFUNDED',
+                    'debug-id',
+                ),
+            );
 
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
