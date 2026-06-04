@@ -14,6 +14,10 @@ class CompleteAuthorizeRequest extends AbstractRequest
      */
     public function getData(): array
     {
+        if (!$this->getTransactionReference()) {
+            $this->setTransactionReference($this->httpRequest->query->get('token'));
+        }
+
         $this->validate('transactionReference');
 
         return [
