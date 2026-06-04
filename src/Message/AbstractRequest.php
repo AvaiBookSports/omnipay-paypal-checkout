@@ -45,7 +45,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     protected function getSdkClient(): PaypalServerSdkClient
     {
-        if ($this->sdkClient !== null) {
+        if ($this->sdkClient instanceof \PaypalServerSdkLib\PaypalServerSdkClient) {
             return $this->sdkClient;
         }
 

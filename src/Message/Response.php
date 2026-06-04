@@ -9,27 +9,18 @@ use Omnipay\Common\Message\RequestInterface;
 
 class Response extends AbstractResponse
 {
-    private string $status;
-    private ?string $transactionReference;
-    private ?string $transactionId;
-    private ?string $message;
-
     /**
      * @param array<string, mixed> $data
      */
     public function __construct(
         RequestInterface $request,
         array $data,
-        string $status,
-        ?string $transactionReference = null,
-        ?string $transactionId = null,
-        ?string $message = null,
+        private readonly string $status,
+        private readonly ?string $transactionReference = null,
+        private readonly ?string $transactionId = null,
+        private readonly ?string $message = null,
     ) {
         parent::__construct($request, $data);
-        $this->status = $status;
-        $this->transactionReference = $transactionReference;
-        $this->transactionId = $transactionId;
-        $this->message = $message;
     }
 
     public function isSuccessful(): bool

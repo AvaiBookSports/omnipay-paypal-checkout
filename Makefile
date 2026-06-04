@@ -1,4 +1,4 @@
-.PHONY: help check unit-tests static-analysis lint coding-style-fix coding-style-check
+.PHONY: help check unit-tests static-analysis lint coding-style-fix coding-style-check rector
 
 help: ## Show this help.
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
@@ -20,3 +20,6 @@ coding-style-fix: ## Fix code formatting with Mago.
 
 coding-style-check: ## Check code formatting with Mago.
 	vendor/bin/mago format --dry-run
+
+rector: ## Run Rector upgrades and refactors.
+	vendor/bin/rector

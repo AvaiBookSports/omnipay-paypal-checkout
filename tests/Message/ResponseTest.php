@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
 {
-    private RequestInterface $mockRequest;
+    private \PHPUnit\Framework\MockObject\MockObject $mockRequest;
 
     protected function setUp(): void
     {

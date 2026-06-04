@@ -10,24 +10,17 @@ use Omnipay\Common\Message\RequestInterface;
 
 class RedirectResponse extends AbstractResponse implements RedirectResponseInterface
 {
-    private string $orderId;
-    private string $approvalUrl;
-    private string $status;
-
     /**
      * @param array<string, mixed> $data
      */
     public function __construct(
         RequestInterface $request,
         array $data,
-        string $orderId,
-        string $approvalUrl,
-        string $status,
+        private readonly string $orderId,
+        private readonly string $approvalUrl,
+        private readonly string $status,
     ) {
         parent::__construct($request, $data);
-        $this->orderId = $orderId;
-        $this->approvalUrl = $approvalUrl;
-        $this->status = $status;
     }
 
     public function isSuccessful(): bool

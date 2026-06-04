@@ -9,14 +9,12 @@ use Omnipay\Common\Message\RequestInterface;
 
 class ErrorResponse extends AbstractResponse
 {
-    private string $errorMessage;
-    private string $errorCode;
-
-    public function __construct(RequestInterface $request, string $message, string $code)
-    {
+    public function __construct(
+        RequestInterface $request,
+        private readonly string $errorMessage,
+        private readonly string $errorCode,
+    ) {
         parent::__construct($request, []);
-        $this->errorMessage = $message;
-        $this->errorCode = $code;
     }
 
     public function isSuccessful(): bool
