@@ -8,38 +8,41 @@ use Omnipay\Common\Message\RequestInterface;
 use Omnipay\PayPalCheckout\Message\ErrorResponse;
 use PHPUnit\Framework\TestCase;
 
-class ErrorResponseTest extends TestCase
+final class ErrorResponseTest extends TestCase
 {
-    private ErrorResponse $response;
+    private ErrorResponse $errorResponse;
 
     protected function setUp(): void
     {
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $this->response = new ErrorResponse($mockRequest, 'Something went wrong', 'INVALID_REQUEST');
+        $this->errorResponse = new ErrorResponse(
+            $this->createStub(RequestInterface::class),
+            'Something went wrong',
+            'INVALID_REQUEST',
+        );
     }
 
     public function testIsNeverSuccessful(): void
     {
-        $this->assertFalse($this->response->isSuccessful());
+        self::assertFalse($this->errorResponse->isSuccessful());
     }
 
     public function testGetMessage(): void
     {
-        $this->assertSame('Something went wrong', $this->response->getMessage());
+        self::assertSame('Something went wrong', $this->errorResponse->getMessage());
     }
 
     public function testGetCode(): void
     {
-        $this->assertSame('INVALID_REQUEST', $this->response->getCode());
+        self::assertSame('INVALID_REQUEST', $this->errorResponse->getCode());
     }
 
     public function testGetTransactionReferenceIsNull(): void
     {
-        $this->assertNull($this->response->getTransactionReference());
+        self::assertNull($this->errorResponse->getTransactionReference());
     }
 
     public function testGetDataIsEmptyArray(): void
     {
-        $this->assertSame([], $this->response->getData());
+        self::assertSame([], $this->errorResponse->getData());
     }
 }

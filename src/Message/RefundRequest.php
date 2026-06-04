@@ -36,9 +36,9 @@ class RefundRequest extends AbstractRequest
             ];
 
             if ($data['amount'] !== null && $data['currency'] !== null) {
-                $body = new SdkRefundRequest();
-                $body->setAmount(new Money($data['currency'], $data['amount']));
-                $options['body'] = $body;
+                $refundRequest = new SdkRefundRequest();
+                $refundRequest->setAmount(new Money($data['currency'], $data['amount']));
+                $options['body'] = $refundRequest;
             }
 
             $apiResponse = $this
@@ -55,8 +55,8 @@ class RefundRequest extends AbstractRequest
                 $refund->getId(),
                 $refund->getInvoiceId(),
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 }

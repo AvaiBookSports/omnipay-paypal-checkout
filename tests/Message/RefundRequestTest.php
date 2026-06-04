@@ -19,46 +19,46 @@ use PaypalServerSdkLib\Models\Refund;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class RefundRequestTest extends TestCase
+final class RefundRequestTest extends TestCase
 {
-    private RefundRequest $request;
+    private RefundRequest $refundRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new RefundRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setTransactionReference('CAP-123');
+        $this->refundRequest = new RefundRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->refundRequest->setClientId('test-id');
+        $this->refundRequest->setClientSecret('test-secret');
+        $this->refundRequest->setTransactionReference('CAP-123');
     }
 
     public function testGetData(): void
     {
-        $data = $this->request->getData();
+        $data = $this->refundRequest->getData();
 
-        $this->assertSame('CAP-123', $data['captureId']);
-        $this->assertNull($data['amount']);
-        $this->assertNull($data['currency']);
+        self::assertSame('CAP-123', $data['captureId']);
+        self::assertNull($data['amount']);
+        self::assertNull($data['currency']);
     }
 
     public function testGetDataWithPartialAmount(): void
     {
-        $this->request->setAmount('5.00');
-        $this->request->setCurrency('EUR');
+        $this->refundRequest->setAmount('5.00');
+        $this->refundRequest->setCurrency('EUR');
 
-        $data = $this->request->getData();
+        $data = $this->refundRequest->getData();
 
-        $this->assertSame('5.00', $data['amount']);
-        $this->assertSame('EUR', $data['currency']);
+        self::assertSame('5.00', $data['amount']);
+        self::assertSame('EUR', $data['currency']);
     }
 
     public function testGetDataValidatesTransactionReference(): void
     {
-        $request = new RefundRequest($this->getHttpClient(), $this->getHttpRequest());
+        $refundRequest = new RefundRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->expectException(InvalidRequestException::class);
-        $request->getData();
+        $refundRequest->getData();
     }
 
     public function testSendDataSuccess(): void
@@ -77,16 +77,16 @@ class RefundRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->refundRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->refundRequest->sendData($this->refundRequest->getData());
 
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertSame('COMPLETED', $response->getStatus());
-        $this->assertSame('REF-789', $response->getTransactionReference());
-        $this->assertSame('INV-004', $response->getTransactionId());
+        self::assertInstanceOf(Response::class, $response);
+        self::assertTrue($response->isSuccessful());
+        self::assertSame('COMPLETED', $response->getStatus());
+        self::assertSame('REF-789', $response->getTransactionReference());
+        self::assertSame('INV-004', $response->getTransactionId());
     }
 
     public function testSendDataApiError(): void
@@ -108,12 +108,12 @@ class RefundRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->refundRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->refundRequest->sendData($this->refundRequest->getData());
 
-        $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->assertFalse($response->isSuccessful());
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertFalse($response->isSuccessful());
     }
 }

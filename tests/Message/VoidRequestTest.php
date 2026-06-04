@@ -18,33 +18,33 @@ use PaypalServerSdkLib\Http\HttpResponse;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class VoidRequestTest extends TestCase
+final class VoidRequestTest extends TestCase
 {
-    private VoidRequest $request;
+    private VoidRequest $voidRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new VoidRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setTransactionReference('AUTH-999');
+        $this->voidRequest = new VoidRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->voidRequest->setClientId('test-id');
+        $this->voidRequest->setClientSecret('test-secret');
+        $this->voidRequest->setTransactionReference('AUTH-999');
     }
 
     public function testGetData(): void
     {
-        $data = $this->request->getData();
+        $data = $this->voidRequest->getData();
 
-        $this->assertSame('AUTH-999', $data['authorizationId']);
+        self::assertSame('AUTH-999', $data['authorizationId']);
     }
 
     public function testGetDataValidatesTransactionReference(): void
     {
-        $request = new VoidRequest($this->getHttpClient(), $this->getHttpRequest());
+        $voidRequest = new VoidRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->expectException(InvalidRequestException::class);
-        $request->getData();
+        $voidRequest->getData();
     }
 
     public function testSendDataWithNullResult(): void
@@ -58,16 +58,16 @@ class VoidRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->voidRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->voidRequest->sendData($this->voidRequest->getData());
 
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertSame('VOIDED', $response->getStatus());
-        $this->assertSame('AUTH-999', $response->getTransactionReference());
-        $this->assertSame([], $response->getData());
+        self::assertInstanceOf(Response::class, $response);
+        self::assertTrue($response->isSuccessful());
+        self::assertSame('VOIDED', $response->getStatus());
+        self::assertSame('AUTH-999', $response->getTransactionReference());
+        self::assertSame([], $response->getData());
     }
 
     public function testSendDataApiError(): void
@@ -89,12 +89,12 @@ class VoidRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->voidRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->voidRequest->sendData($this->voidRequest->getData());
 
-        $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->assertFalse($response->isSuccessful());
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertFalse($response->isSuccessful());
     }
 }

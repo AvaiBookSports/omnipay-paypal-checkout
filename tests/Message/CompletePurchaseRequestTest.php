@@ -22,45 +22,45 @@ use PaypalServerSdkLib\Models\PurchaseUnit;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class CompletePurchaseRequestTest extends TestCase
+final class CompletePurchaseRequestTest extends TestCase
 {
-    private CompletePurchaseRequest $request;
+    private CompletePurchaseRequest $completePurchaseRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new CompletePurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setTransactionReference('ORDER-123');
+        $this->completePurchaseRequest = new CompletePurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->completePurchaseRequest->setClientId('test-id');
+        $this->completePurchaseRequest->setClientSecret('test-secret');
+        $this->completePurchaseRequest->setTransactionReference('ORDER-123');
     }
 
     public function testGetData(): void
     {
-        $data = $this->request->getData();
+        $data = $this->completePurchaseRequest->getData();
 
-        $this->assertSame('ORDER-123', $data['orderId']);
+        self::assertSame('ORDER-123', $data['orderId']);
     }
 
     public function testGetDataValidatesTransactionReference(): void
     {
-        $request = new CompletePurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $completePurchaseRequest = new CompletePurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->expectException(InvalidRequestException::class);
-        $request->getData();
+        $completePurchaseRequest->getData();
     }
 
     public function testSendDataSuccess(): void
     {
-        $capture = new CapturedPayment();
-        $capture->setId('CAP-789');
+        $capturedPayment = new CapturedPayment();
+        $capturedPayment->setId('CAP-789');
 
-        $payments = new PaymentCollection();
-        $payments->setCaptures([$capture]);
+        $paymentCollection = new PaymentCollection();
+        $paymentCollection->setCaptures([$capturedPayment]);
 
         $purchaseUnit = new PurchaseUnit();
-        $purchaseUnit->setPayments($payments);
+        $purchaseUnit->setPayments($paymentCollection);
         $purchaseUnit->setInvoiceId('INV-001');
 
         $order = new Order();
@@ -77,16 +77,16 @@ class CompletePurchaseRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->completePurchaseRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->completePurchaseRequest->sendData($this->completePurchaseRequest->getData());
 
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertSame('COMPLETED', $response->getStatus());
-        $this->assertSame('CAP-789', $response->getTransactionReference());
-        $this->assertSame('INV-001', $response->getTransactionId());
+        self::assertInstanceOf(Response::class, $response);
+        self::assertTrue($response->isSuccessful());
+        self::assertSame('COMPLETED', $response->getStatus());
+        self::assertSame('CAP-789', $response->getTransactionReference());
+        self::assertSame('INV-001', $response->getTransactionId());
     }
 
     public function testSendDataFallsBackToOrderIdWhenNoCaptureId(): void
@@ -105,12 +105,12 @@ class CompletePurchaseRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->completePurchaseRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->completePurchaseRequest->sendData($this->completePurchaseRequest->getData());
 
-        $this->assertSame('ORDER-123', $response->getTransactionReference());
+        self::assertSame('ORDER-123', $response->getTransactionReference());
     }
 
     public function testSendDataApiError(): void
@@ -132,12 +132,12 @@ class CompletePurchaseRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->completePurchaseRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->completePurchaseRequest->sendData($this->completePurchaseRequest->getData());
 
-        $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->assertFalse($response->isSuccessful());
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertFalse($response->isSuccessful());
     }
 }

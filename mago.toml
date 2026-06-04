@@ -6,7 +6,7 @@ php-version = "8.2.0"
 
 [source]
 workspace = "."
-paths = ["src/", "tests/"]
+paths = ["src/", "tests/", "rector.php"]
 includes = ["vendor"]
 excludes = []
 
@@ -21,9 +21,10 @@ preserve-breaking-argument-list = true
 preserve-breaking-member-access-chain = true
 
 [linter]
-integrations = ["symfony", "phpunit"]
+integrations = ["phpunit"]
 
 [linter.rules]
+assertion-style = { style = "self" }
 ambiguous-function-call = { enabled = false }
 literal-named-argument = { enabled = false }
 halstead = { effort-threshold = 7000 }

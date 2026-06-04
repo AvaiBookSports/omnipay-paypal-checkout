@@ -20,33 +20,33 @@ use PaypalServerSdkLib\Models\PurchaseUnit;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class FetchTransactionRequestTest extends TestCase
+final class FetchTransactionRequestTest extends TestCase
 {
-    private FetchTransactionRequest $request;
+    private FetchTransactionRequest $fetchTransactionRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new FetchTransactionRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setTransactionReference('ORDER-789');
+        $this->fetchTransactionRequest = new FetchTransactionRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->fetchTransactionRequest->setClientId('test-id');
+        $this->fetchTransactionRequest->setClientSecret('test-secret');
+        $this->fetchTransactionRequest->setTransactionReference('ORDER-789');
     }
 
     public function testGetData(): void
     {
-        $data = $this->request->getData();
+        $data = $this->fetchTransactionRequest->getData();
 
-        $this->assertSame('ORDER-789', $data['orderId']);
+        self::assertSame('ORDER-789', $data['orderId']);
     }
 
     public function testGetDataValidatesTransactionReference(): void
     {
-        $request = new FetchTransactionRequest($this->getHttpClient(), $this->getHttpRequest());
+        $fetchTransactionRequest = new FetchTransactionRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->expectException(InvalidRequestException::class);
-        $request->getData();
+        $fetchTransactionRequest->getData();
     }
 
     public function testSendDataSuccess(): void
@@ -68,16 +68,16 @@ class FetchTransactionRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->fetchTransactionRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->fetchTransactionRequest->sendData($this->fetchTransactionRequest->getData());
 
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertSame('COMPLETED', $response->getStatus());
-        $this->assertSame('ORDER-789', $response->getTransactionReference());
-        $this->assertSame('INV-005', $response->getTransactionId());
+        self::assertInstanceOf(Response::class, $response);
+        self::assertTrue($response->isSuccessful());
+        self::assertSame('COMPLETED', $response->getStatus());
+        self::assertSame('ORDER-789', $response->getTransactionReference());
+        self::assertSame('INV-005', $response->getTransactionId());
     }
 
     public function testSendDataApiError(): void
@@ -99,12 +99,12 @@ class FetchTransactionRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->fetchTransactionRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->fetchTransactionRequest->sendData($this->fetchTransactionRequest->getData());
 
-        $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->assertFalse($response->isSuccessful());
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertFalse($response->isSuccessful());
     }
 }

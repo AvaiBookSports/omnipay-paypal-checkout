@@ -48,33 +48,34 @@ class PurchaseRequest extends AbstractRequest
      */
     public function sendData($data): RedirectResponse|ErrorResponse
     {
-        $amount = new AmountWithBreakdown(
+        $amountWithBreakdown = new AmountWithBreakdown(
             (string) $data['currency'],
             (string) $data['amount'],
         );
 
-        $purchaseUnit = new PurchaseUnitRequest($amount);
+        $purchaseUnitRequest = new PurchaseUnitRequest($amountWithBreakdown);
         if ($data['description'] !== null) {
-            $purchaseUnit->setDescription($data['description']);
+            $purchaseUnitRequest->setDescription($data['description']);
         }
+
         if ($data['transactionId'] !== null) {
-            $purchaseUnit->setInvoiceId($data['transactionId']);
-            $purchaseUnit->setReferenceId($data['transactionId']);
+            $purchaseUnitRequest->setInvoiceId($data['transactionId']);
+            $purchaseUnitRequest->setReferenceId($data['transactionId']);
         }
 
-        $orderRequest = new OrderRequest($data['intent'], [$purchaseUnit]);
+        $orderRequest = new OrderRequest($data['intent'], [$purchaseUnitRequest]);
 
-        $experienceContext = new PaypalWalletExperienceContext();
-        $experienceContext->setReturnUrl($data['returnUrl']);
-        $experienceContext->setCancelUrl($data['cancelUrl']);
-        $experienceContext->setShippingPreference(PaypalWalletContextShippingPreference::NO_SHIPPING);
-        $experienceContext->setUserAction(PaypalExperienceUserAction::PAY_NOW);
+        $paypalWalletExperienceContext = new PaypalWalletExperienceContext();
+        $paypalWalletExperienceContext->setReturnUrl($data['returnUrl']);
+        $paypalWalletExperienceContext->setCancelUrl($data['cancelUrl']);
+        $paypalWalletExperienceContext->setShippingPreference(PaypalWalletContextShippingPreference::NO_SHIPPING);
+        $paypalWalletExperienceContext->setUserAction(PaypalExperienceUserAction::PAY_NOW);
         if ($data['brandName'] !== null && $data['brandName'] !== '') {
-            $experienceContext->setBrandName($data['brandName']);
+            $paypalWalletExperienceContext->setBrandName($data['brandName']);
         }
 
         $paypalWallet = new PaypalWallet();
-        $paypalWallet->setExperienceContext($experienceContext);
+        $paypalWallet->setExperienceContext($paypalWalletExperienceContext);
 
         $paymentSource = new PaymentSource();
         $paymentSource->setPaypal($paypalWallet);
@@ -103,8 +104,8 @@ class PurchaseRequest extends AbstractRequest
                 $approvalUrl,
                 $order->getStatus() ?? 'CREATED',
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 }

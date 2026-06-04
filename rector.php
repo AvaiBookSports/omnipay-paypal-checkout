@@ -15,4 +15,17 @@ return RectorConfig::configure()
         deadCode: true,
         codeQuality: true,
         earlyReturn: true,
-    );
+
+        codingStyle: true,
+        typeDeclarationDocblocks: true,
+        privatization: true,
+        naming: true,
+        instanceOf: true,
+        rectorPreset: true,
+        phpunitCodeQuality: true,
+        symfonyCodeQuality: true,
+        symfonyConfigs: true,
+    )
+    ->withSkip([
+        \Rector\PHPUnit\CodeQuality\Rector\Class_\PreferPHPUnitThisCallRector::class,
+    ]);

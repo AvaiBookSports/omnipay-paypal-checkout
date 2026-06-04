@@ -8,83 +8,100 @@ use Omnipay\Common\Message\RequestInterface;
 use Omnipay\PayPalCheckout\Message\Response;
 use PHPUnit\Framework\TestCase;
 
-class ResponseTest extends TestCase
+final class ResponseTest extends TestCase
 {
-    private \PHPUnit\Framework\MockObject\MockObject $mockRequest;
-
-    protected function setUp(): void
-    {
-        $this->mockRequest = $this->createMock(RequestInterface::class);
-    }
+    protected function setUp(): void {}
 
     public function testSuccessfulStatuses(): void
     {
         foreach (['COMPLETED', 'APPROVED', 'VOIDED', 'CREATED'] as $status) {
-            $response = new Response($this->mockRequest, [], $status);
-            $this->assertTrue($response->isSuccessful(), "Status $status should be successful");
+            $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], $status);
+            self::assertTrue($response->isSuccessful(), sprintf('Status %s should be successful', $status));
         }
     }
 
     public function testUnsuccessfulStatuses(): void
     {
         foreach (['PENDING', 'FAILED', 'UNKNOWN', 'DENIED'] as $status) {
-            $response = new Response($this->mockRequest, [], $status);
-            $this->assertFalse($response->isSuccessful(), "Status $status should not be successful");
+            $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], $status);
+            self::assertFalse($response->isSuccessful(), sprintf('Status %s should not be successful', $status));
         }
     }
 
     public function testGetStatus(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED');
-        $this->assertSame('COMPLETED', $response->getStatus());
+        $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], 'COMPLETED');
+        self::assertSame('COMPLETED', $response->getStatus());
     }
 
     public function testGetCode(): void
     {
-        $response = new Response($this->mockRequest, [], 'APPROVED');
-        $this->assertSame('APPROVED', $response->getCode());
+        $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], 'APPROVED');
+        self::assertSame('APPROVED', $response->getCode());
     }
 
     public function testGetTransactionReference(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED', 'ref-123');
-        $this->assertSame('ref-123', $response->getTransactionReference());
+        $response = new Response(
+            $this->createStub(\Omnipay\Common\Message\RequestInterface::class),
+            [],
+            'COMPLETED',
+            'ref-123',
+        );
+        self::assertSame('ref-123', $response->getTransactionReference());
     }
 
     public function testGetTransactionReferenceDefaultsToNull(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED');
-        $this->assertNull($response->getTransactionReference());
+        $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], 'COMPLETED');
+        self::assertNull($response->getTransactionReference());
     }
 
     public function testGetTransactionId(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED', 'ref', 'tx-456');
-        $this->assertSame('tx-456', $response->getTransactionId());
+        $response = new Response(
+            $this->createStub(\Omnipay\Common\Message\RequestInterface::class),
+            [],
+            'COMPLETED',
+            'ref',
+            'tx-456',
+        );
+        self::assertSame('tx-456', $response->getTransactionId());
     }
 
     public function testGetTransactionIdDefaultsToNull(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED');
-        $this->assertNull($response->getTransactionId());
+        $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], 'COMPLETED');
+        self::assertNull($response->getTransactionId());
     }
 
     public function testGetMessage(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED', null, null, 'Some message');
-        $this->assertSame('Some message', $response->getMessage());
+        $response = new Response(
+            $this->createStub(\Omnipay\Common\Message\RequestInterface::class),
+            [],
+            'COMPLETED',
+            null,
+            null,
+            'Some message',
+        );
+        self::assertSame('Some message', $response->getMessage());
     }
 
     public function testGetMessageDefaultsToNull(): void
     {
-        $response = new Response($this->mockRequest, [], 'COMPLETED');
-        $this->assertNull($response->getMessage());
+        $response = new Response($this->createStub(\Omnipay\Common\Message\RequestInterface::class), [], 'COMPLETED');
+        self::assertNull($response->getMessage());
     }
 
     public function testGetData(): void
     {
         $data = ['foo' => 'bar', 'baz' => 123];
-        $response = new Response($this->mockRequest, $data, 'COMPLETED');
-        $this->assertSame($data, $response->getData());
+        $response = new Response(
+            $this->createStub(\Omnipay\Common\Message\RequestInterface::class),
+            $data,
+            'COMPLETED',
+        );
+        self::assertSame($data, $response->getData());
     }
 }

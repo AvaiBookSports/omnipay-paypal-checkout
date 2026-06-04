@@ -19,57 +19,57 @@ use PaypalServerSdkLib\Models\CapturedPayment;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class CaptureRequestTest extends TestCase
+final class CaptureRequestTest extends TestCase
 {
-    private CaptureRequest $request;
+    private CaptureRequest $captureRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new CaptureRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setTransactionReference('AUTH-123');
+        $this->captureRequest = new CaptureRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->captureRequest->setClientId('test-id');
+        $this->captureRequest->setClientSecret('test-secret');
+        $this->captureRequest->setTransactionReference('AUTH-123');
     }
 
     public function testGetData(): void
     {
-        $data = $this->request->getData();
+        $data = $this->captureRequest->getData();
 
-        $this->assertSame('AUTH-123', $data['authorizationId']);
-        $this->assertNull($data['amount']);
-        $this->assertNull($data['currency']);
+        self::assertSame('AUTH-123', $data['authorizationId']);
+        self::assertNull($data['amount']);
+        self::assertNull($data['currency']);
     }
 
     public function testGetDataWithAmount(): void
     {
-        $this->request->setAmount('50.00');
-        $this->request->setCurrency('EUR');
+        $this->captureRequest->setAmount('50.00');
+        $this->captureRequest->setCurrency('EUR');
 
-        $data = $this->request->getData();
+        $data = $this->captureRequest->getData();
 
-        $this->assertSame('50.00', $data['amount']);
-        $this->assertSame('EUR', $data['currency']);
+        self::assertSame('50.00', $data['amount']);
+        self::assertSame('EUR', $data['currency']);
     }
 
     public function testGetDataValidatesTransactionReference(): void
     {
-        $request = new CaptureRequest($this->getHttpClient(), $this->getHttpRequest());
+        $captureRequest = new CaptureRequest($this->getHttpClient(), $this->getHttpRequest());
 
         $this->expectException(InvalidRequestException::class);
-        $request->getData();
+        $captureRequest->getData();
     }
 
     public function testSendDataSuccess(): void
     {
-        $capture = new CapturedPayment();
-        $capture->setId('CAP-456');
-        $capture->setStatus('COMPLETED');
-        $capture->setInvoiceId('INV-003');
+        $capturedPayment = new CapturedPayment();
+        $capturedPayment->setId('CAP-456');
+        $capturedPayment->setStatus('COMPLETED');
+        $capturedPayment->setInvoiceId('INV-003');
 
         $apiResponse = $this->createMock(ApiResponse::class);
-        $apiResponse->method('getResult')->willReturn($capture);
+        $apiResponse->method('getResult')->willReturn($capturedPayment);
 
         $paymentsController = $this->createMock(PaymentsController::class);
         $paymentsController->method('captureAuthorizedPayment')->willReturn($apiResponse);
@@ -77,16 +77,16 @@ class CaptureRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->captureRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->captureRequest->sendData($this->captureRequest->getData());
 
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertSame('COMPLETED', $response->getStatus());
-        $this->assertSame('CAP-456', $response->getTransactionReference());
-        $this->assertSame('INV-003', $response->getTransactionId());
+        self::assertInstanceOf(Response::class, $response);
+        self::assertTrue($response->isSuccessful());
+        self::assertSame('COMPLETED', $response->getStatus());
+        self::assertSame('CAP-456', $response->getTransactionReference());
+        self::assertSame('INV-003', $response->getTransactionId());
     }
 
     public function testSendDataApiError(): void
@@ -108,12 +108,12 @@ class CaptureRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->captureRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->captureRequest->sendData($this->captureRequest->getData());
 
-        $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->assertFalse($response->isSuccessful());
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertFalse($response->isSuccessful());
     }
 }

@@ -15,7 +15,7 @@ use Omnipay\PayPalCheckout\Message\RefundRequest;
 use Omnipay\PayPalCheckout\Message\VoidRequest;
 use Omnipay\Tests\GatewayTestCase;
 
-class GatewayTest extends GatewayTestCase
+final class GatewayTest extends GatewayTestCase
 {
     protected function setUp(): void
     {
@@ -28,94 +28,94 @@ class GatewayTest extends GatewayTestCase
 
     public function testGatewayName(): void
     {
-        $this->assertSame('PayPal Checkout', $this->gateway->getName());
+        self::assertSame('PayPal Checkout', $this->gateway->getName());
     }
 
     public function testGatewayShortName(): void
     {
-        $this->assertSame('PayPalCheckout', $this->gateway->getShortName());
+        self::assertSame('PayPalCheckout', $this->gateway->getShortName());
     }
 
     public function testDefaultParameters(): void
     {
         $defaults = $this->gateway->getDefaultParameters();
 
-        $this->assertArrayHasKey('clientId', $defaults);
-        $this->assertArrayHasKey('clientSecret', $defaults);
-        $this->assertArrayHasKey('testMode', $defaults);
-        $this->assertArrayHasKey('brandName', $defaults);
+        self::assertArrayHasKey('clientId', $defaults);
+        self::assertArrayHasKey('clientSecret', $defaults);
+        self::assertArrayHasKey('testMode', $defaults);
+        self::assertArrayHasKey('brandName', $defaults);
     }
 
     public function testClientId(): void
     {
         $this->gateway->setClientId('my-id');
-        $this->assertSame('my-id', $this->gateway->getClientId());
+        self::assertSame('my-id', $this->gateway->getClientId());
     }
 
     public function testClientSecret(): void
     {
         $this->gateway->setClientSecret('my-secret');
-        $this->assertSame('my-secret', $this->gateway->getClientSecret());
+        self::assertSame('my-secret', $this->gateway->getClientSecret());
     }
 
     public function testBrandName(): void
     {
         $this->gateway->setBrandName('My Brand');
-        $this->assertSame('My Brand', $this->gateway->getBrandName());
+        self::assertSame('My Brand', $this->gateway->getBrandName());
     }
 
     public function testBrandNameNullable(): void
     {
         $this->gateway->setBrandName(null);
-        $this->assertNull($this->gateway->getBrandName());
+        self::assertNull($this->gateway->getBrandName());
     }
 
     public function testPurchaseReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->purchase();
-        $this->assertInstanceOf(PurchaseRequest::class, $request);
+        self::assertInstanceOf(PurchaseRequest::class, $request);
     }
 
     public function testAuthorizeReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->authorize();
-        $this->assertInstanceOf(AuthorizeRequest::class, $request);
+        self::assertInstanceOf(AuthorizeRequest::class, $request);
     }
 
     public function testCaptureReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->capture();
-        $this->assertInstanceOf(CaptureRequest::class, $request);
+        self::assertInstanceOf(CaptureRequest::class, $request);
     }
 
     public function testCompletePurchaseReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->completePurchase();
-        $this->assertInstanceOf(CompletePurchaseRequest::class, $request);
+        self::assertInstanceOf(CompletePurchaseRequest::class, $request);
     }
 
     public function testCompleteAuthorizeReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->completeAuthorize();
-        $this->assertInstanceOf(CompleteAuthorizeRequest::class, $request);
+        self::assertInstanceOf(CompleteAuthorizeRequest::class, $request);
     }
 
     public function testRefundReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->refund();
-        $this->assertInstanceOf(RefundRequest::class, $request);
+        self::assertInstanceOf(RefundRequest::class, $request);
     }
 
     public function testVoidReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->void();
-        $this->assertInstanceOf(VoidRequest::class, $request);
+        self::assertInstanceOf(VoidRequest::class, $request);
     }
 
     public function testFetchTransactionReturnsCorrectRequestClass(): void
     {
         $request = $this->gateway->fetchTransaction();
-        $this->assertInstanceOf(FetchTransactionRequest::class, $request);
+        self::assertInstanceOf(FetchTransactionRequest::class, $request);
     }
 
     public function testParametersPropagateToRequest(): void
@@ -126,8 +126,8 @@ class GatewayTest extends GatewayTestCase
 
         $request = $this->gateway->purchase();
 
-        $this->assertSame('propagated-id', $request->getClientId());
-        $this->assertSame('propagated-secret', $request->getClientSecret());
-        $this->assertSame('Propagated Brand', $request->getBrandName());
+        self::assertSame('propagated-id', $request->getClientId());
+        self::assertSame('propagated-secret', $request->getClientSecret());
+        self::assertSame('Propagated Brand', $request->getBrandName());
     }
 }

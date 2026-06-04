@@ -21,82 +21,82 @@ use PaypalServerSdkLib\Models\Order;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class PurchaseRequestTest extends TestCase
+final class PurchaseRequestTest extends TestCase
 {
-    private PurchaseRequest $request;
+    private PurchaseRequest $purchaseRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setAmount('10.00');
-        $this->request->setCurrency('EUR');
-        $this->request->setReturnUrl('https://example.com/return');
-        $this->request->setCancelUrl('https://example.com/cancel');
+        $this->purchaseRequest = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->purchaseRequest->setClientId('test-id');
+        $this->purchaseRequest->setClientSecret('test-secret');
+        $this->purchaseRequest->setAmount('10.00');
+        $this->purchaseRequest->setCurrency('EUR');
+        $this->purchaseRequest->setReturnUrl('https://example.com/return');
+        $this->purchaseRequest->setCancelUrl('https://example.com/cancel');
     }
 
     public function testGetData(): void
     {
-        $data = $this->request->getData();
+        $data = $this->purchaseRequest->getData();
 
-        $this->assertSame(CheckoutPaymentIntent::CAPTURE, $data['intent']);
-        $this->assertSame('10.00', $data['amount']);
-        $this->assertSame('EUR', $data['currency']);
-        $this->assertSame('https://example.com/return', $data['returnUrl']);
-        $this->assertSame('https://example.com/cancel', $data['cancelUrl']);
+        self::assertSame(CheckoutPaymentIntent::CAPTURE, $data['intent']);
+        self::assertSame('10.00', $data['amount']);
+        self::assertSame('EUR', $data['currency']);
+        self::assertSame('https://example.com/return', $data['returnUrl']);
+        self::assertSame('https://example.com/cancel', $data['cancelUrl']);
     }
 
     public function testGetDataWithOptionalFields(): void
     {
-        $this->request->setDescription('Test payment');
-        $this->request->setTransactionId('INV-001');
-        $this->request->setBrandName('Test Brand');
-        $this->request->setNotifyUrl('https://example.com/notify');
+        $this->purchaseRequest->setDescription('Test payment');
+        $this->purchaseRequest->setTransactionId('INV-001');
+        $this->purchaseRequest->setBrandName('Test Brand');
+        $this->purchaseRequest->setNotifyUrl('https://example.com/notify');
 
-        $data = $this->request->getData();
+        $data = $this->purchaseRequest->getData();
 
-        $this->assertSame('Test payment', $data['description']);
-        $this->assertSame('INV-001', $data['transactionId']);
-        $this->assertSame('Test Brand', $data['brandName']);
-        $this->assertSame('https://example.com/notify', $data['notifyUrl']);
+        self::assertSame('Test payment', $data['description']);
+        self::assertSame('INV-001', $data['transactionId']);
+        self::assertSame('Test Brand', $data['brandName']);
+        self::assertSame('https://example.com/notify', $data['notifyUrl']);
     }
 
     public function testGetDataValidatesAmount(): void
     {
-        $this->request->setAmount(null);
+        $this->purchaseRequest->setAmount(null);
 
         $this->expectException(InvalidRequestException::class);
-        $this->request->getData();
+        $this->purchaseRequest->getData();
     }
 
     public function testGetDataValidatesCurrency(): void
     {
-        $request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
-        $request->setAmount('10.00');
-        $request->setReturnUrl('https://example.com/return');
-        $request->setCancelUrl('https://example.com/cancel');
+        $purchaseRequest = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $purchaseRequest->setAmount('10.00');
+        $purchaseRequest->setReturnUrl('https://example.com/return');
+        $purchaseRequest->setCancelUrl('https://example.com/cancel');
 
         $this->expectException(InvalidRequestException::class);
-        $request->getData();
+        $purchaseRequest->getData();
     }
 
     public function testGetDataValidatesReturnUrl(): void
     {
-        $this->request->setReturnUrl(null);
+        $this->purchaseRequest->setReturnUrl(null);
 
         $this->expectException(InvalidRequestException::class);
-        $this->request->getData();
+        $this->purchaseRequest->getData();
     }
 
     public function testGetDataValidatesCancelUrl(): void
     {
-        $this->request->setCancelUrl(null);
+        $this->purchaseRequest->setCancelUrl(null);
 
         $this->expectException(InvalidRequestException::class);
-        $this->request->getData();
+        $this->purchaseRequest->getData();
     }
 
     public function testSendDataSuccess(): void
@@ -118,17 +118,17 @@ class PurchaseRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->purchaseRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->purchaseRequest->sendData($this->purchaseRequest->getData());
 
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertTrue($response->isRedirect());
-        $this->assertFalse($response->isSuccessful());
-        $this->assertSame('ORDER-123', $response->getTransactionReference());
-        $this->assertSame('https://www.sandbox.paypal.com/checkoutnow?token=ORDER-123', $response->getRedirectUrl());
-        $this->assertSame('CREATED', $response->getCode());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertTrue($response->isRedirect());
+        self::assertFalse($response->isSuccessful());
+        self::assertSame('ORDER-123', $response->getTransactionReference());
+        self::assertSame('https://www.sandbox.paypal.com/checkoutnow?token=ORDER-123', $response->getRedirectUrl());
+        self::assertSame('CREATED', $response->getCode());
     }
 
     public function testSendDataApiError(): void
@@ -150,13 +150,13 @@ class PurchaseRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->purchaseRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->purchaseRequest->sendData($this->purchaseRequest->getData());
 
-        $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->assertFalse($response->isSuccessful());
-        $this->assertSame('INVALID_REQUEST', $response->getMessage());
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertFalse($response->isSuccessful());
+        self::assertSame('INVALID_REQUEST', $response->getMessage());
     }
 }

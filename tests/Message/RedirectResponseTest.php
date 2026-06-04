@@ -8,15 +8,14 @@ use Omnipay\Common\Message\RequestInterface;
 use Omnipay\PayPalCheckout\Message\RedirectResponse;
 use PHPUnit\Framework\TestCase;
 
-class RedirectResponseTest extends TestCase
+final class RedirectResponseTest extends TestCase
 {
-    private RedirectResponse $response;
+    private RedirectResponse $redirectResponse;
 
     protected function setUp(): void
     {
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $this->response = new RedirectResponse(
-            $mockRequest,
+        $this->redirectResponse = new RedirectResponse(
+            $this->createStub(RequestInterface::class),
             ['id' => 'ORDER-123'],
             'ORDER-123',
             'https://www.sandbox.paypal.com/checkoutnow?token=ORDER-123',
@@ -26,49 +25,49 @@ class RedirectResponseTest extends TestCase
 
     public function testIsNotSuccessful(): void
     {
-        $this->assertFalse($this->response->isSuccessful());
+        self::assertFalse($this->redirectResponse->isSuccessful());
     }
 
     public function testIsRedirect(): void
     {
-        $this->assertTrue($this->response->isRedirect());
+        self::assertTrue($this->redirectResponse->isRedirect());
     }
 
     public function testGetRedirectUrl(): void
     {
-        $this->assertSame(
+        self::assertSame(
             'https://www.sandbox.paypal.com/checkoutnow?token=ORDER-123',
-            $this->response->getRedirectUrl(),
+            $this->redirectResponse->getRedirectUrl(),
         );
     }
 
     public function testGetRedirectMethod(): void
     {
-        $this->assertSame('GET', $this->response->getRedirectMethod());
+        self::assertSame('GET', $this->redirectResponse->getRedirectMethod());
     }
 
     public function testGetRedirectData(): void
     {
-        $this->assertSame([], $this->response->getRedirectData());
+        self::assertSame([], $this->redirectResponse->getRedirectData());
     }
 
     public function testGetTransactionReference(): void
     {
-        $this->assertSame('ORDER-123', $this->response->getTransactionReference());
+        self::assertSame('ORDER-123', $this->redirectResponse->getTransactionReference());
     }
 
     public function testGetCode(): void
     {
-        $this->assertSame('CREATED', $this->response->getCode());
+        self::assertSame('CREATED', $this->redirectResponse->getCode());
     }
 
     public function testGetMessage(): void
     {
-        $this->assertNull($this->response->getMessage());
+        self::assertNull($this->redirectResponse->getMessage());
     }
 
     public function testGetData(): void
     {
-        $this->assertSame(['id' => 'ORDER-123'], $this->response->getData());
+        self::assertSame(['id' => 'ORDER-123'], $this->redirectResponse->getData());
     }
 }

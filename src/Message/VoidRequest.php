@@ -51,8 +51,8 @@ class VoidRequest extends AbstractRequest
                 'VOIDED',
                 $data['authorizationId'],
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 }

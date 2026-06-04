@@ -36,9 +36,9 @@ class CaptureRequest extends AbstractRequest
             ];
 
             if ($data['amount'] !== null && $data['currency'] !== null) {
-                $body = new SdkCaptureRequest();
-                $body->setAmount(new Money($data['currency'], $data['amount']));
-                $options['body'] = $body;
+                $captureRequest = new SdkCaptureRequest();
+                $captureRequest->setAmount(new Money($data['currency'], $data['amount']));
+                $options['body'] = $captureRequest;
             }
 
             $apiResponse = $this
@@ -55,8 +55,8 @@ class CaptureRequest extends AbstractRequest
                 $capture->getId(),
                 $capture->getInvoiceId(),
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 }

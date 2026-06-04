@@ -16,28 +16,28 @@ use PaypalServerSdkLib\Models\Order;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use ReflectionProperty;
 
-class AuthorizeRequestTest extends TestCase
+final class AuthorizeRequestTest extends TestCase
 {
-    private AuthorizeRequest $request;
+    private AuthorizeRequest $authorizeRequest;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->request = new AuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->setClientId('test-id');
-        $this->request->setClientSecret('test-secret');
-        $this->request->setAmount('25.00');
-        $this->request->setCurrency('USD');
-        $this->request->setReturnUrl('https://example.com/return');
-        $this->request->setCancelUrl('https://example.com/cancel');
+        $this->authorizeRequest = new AuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->authorizeRequest->setClientId('test-id');
+        $this->authorizeRequest->setClientSecret('test-secret');
+        $this->authorizeRequest->setAmount('25.00');
+        $this->authorizeRequest->setCurrency('USD');
+        $this->authorizeRequest->setReturnUrl('https://example.com/return');
+        $this->authorizeRequest->setCancelUrl('https://example.com/cancel');
     }
 
     public function testIntentIsAuthorize(): void
     {
-        $data = $this->request->getData();
+        $data = $this->authorizeRequest->getData();
 
-        $this->assertSame(CheckoutPaymentIntent::AUTHORIZE, $data['intent']);
+        self::assertSame(CheckoutPaymentIntent::AUTHORIZE, $data['intent']);
     }
 
     public function testSendDataSuccess(): void
@@ -58,12 +58,12 @@ class AuthorizeRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflection = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
-        $reflection->setValue($this->request, $sdkClient);
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty->setValue($this->authorizeRequest, $sdkClient);
 
-        $response = $this->request->sendData($this->request->getData());
+        $response = $this->authorizeRequest->sendData($this->authorizeRequest->getData());
 
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('ORDER-AUTH-456', $response->getTransactionReference());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('ORDER-AUTH-456', $response->getTransactionReference());
     }
 }

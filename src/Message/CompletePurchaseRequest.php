@@ -42,19 +42,20 @@ class CompletePurchaseRequest extends AbstractRequest
                 $captureId ?? $order->getId(),
                 $order->getPurchaseUnits()[0]?->getInvoiceId(),
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 
     private function extractCaptureId(\PaypalServerSdkLib\Models\Order $order): ?string
     {
         $purchaseUnits = $order->getPurchaseUnits() ?? [];
-        foreach ($purchaseUnits as $unit) {
-            $payments = $unit->getPayments();
+        foreach ($purchaseUnits as $purchaseUnit) {
+            $payments = $purchaseUnit->getPayments();
             if ($payments === null) {
                 continue;
             }
+
             $captures = $payments->getCaptures() ?? [];
             foreach ($captures as $capture) {
                 $id = $capture->getId();

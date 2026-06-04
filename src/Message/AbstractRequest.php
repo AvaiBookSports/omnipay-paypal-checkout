@@ -11,7 +11,7 @@ use PaypalServerSdkLib\PaypalServerSdkClientBuilder;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
-    private ?PaypalServerSdkClient $sdkClient = null;
+    private ?PaypalServerSdkClient $paypalServerSdkClient = null;
 
     public function getClientId(): string
     {
@@ -45,11 +45,11 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     protected function getSdkClient(): PaypalServerSdkClient
     {
-        if ($this->sdkClient instanceof \PaypalServerSdkLib\PaypalServerSdkClient) {
-            return $this->sdkClient;
+        if ($this->paypalServerSdkClient instanceof \PaypalServerSdkLib\PaypalServerSdkClient) {
+            return $this->paypalServerSdkClient;
         }
 
-        $this->sdkClient = PaypalServerSdkClientBuilder::init()
+        $this->paypalServerSdkClient = PaypalServerSdkClientBuilder::init()
             ->clientCredentialsAuthCredentials(
                 ClientCredentialsAuthCredentialsBuilder::init(
                     $this->getClientId(),
@@ -59,7 +59,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             ->environment($this->getTestMode() ? Environment::SANDBOX : Environment::PRODUCTION)
             ->build();
 
-        return $this->sdkClient;
+        return $this->paypalServerSdkClient;
     }
 
     /**

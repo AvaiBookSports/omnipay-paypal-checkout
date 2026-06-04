@@ -44,19 +44,20 @@ class CompleteAuthorizeRequest extends AbstractRequest
                 $authorizationId ?? $order->getId(),
                 $order->getPurchaseUnits()[0]?->getInvoiceId(),
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 
-    private function extractAuthorizationId(OrderAuthorizeResponse $order): ?string
+    private function extractAuthorizationId(OrderAuthorizeResponse $orderAuthorizeResponse): ?string
     {
-        $purchaseUnits = $order->getPurchaseUnits() ?? [];
-        foreach ($purchaseUnits as $unit) {
-            $payments = $unit->getPayments();
+        $purchaseUnits = $orderAuthorizeResponse->getPurchaseUnits() ?? [];
+        foreach ($purchaseUnits as $purchaseUnit) {
+            $payments = $purchaseUnit->getPayments();
             if ($payments === null) {
                 continue;
             }
+
             $authorizations = $payments->getAuthorizations() ?? [];
             foreach ($authorizations as $authorization) {
                 $id = $authorization->getId();

@@ -40,8 +40,8 @@ class FetchTransactionRequest extends AbstractRequest
                 $order->getId(),
                 $order->getPurchaseUnits()[0]?->getInvoiceId(),
             );
-        } catch (ErrorException $e) {
-            return new ErrorResponse($this, $e->getMessage(), (string) $e->getCode());
+        } catch (ErrorException $errorException) {
+            return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());
         }
     }
 }
