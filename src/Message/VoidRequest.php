@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Omnipay\PayPalCheckout\Message;
 
 use PaypalServerSdkLib\Exceptions\ErrorException;
+use PaypalServerSdkLib\Models\PaymentAuthorization;
 
 /**
  * @see \Omnipay\PayPalCheckout\Tests\Message\VoidRequestTest
@@ -39,20 +40,21 @@ class VoidRequest extends AbstractRequest
 
             $result = $apiResponse->getResult();
 
-            if ($result !== null) {
+            if ($result instanceof PaymentAuthorization) {
                 return new Response(
                     $this,
-                    \json_decode(\json_encode($result->jsonSerialize()), true),
+                    $this->serializeToArray($result),
                     $result->getStatus() ?? 'VOIDED',
                     $result->getId(),
                 );
             }
 
+            $authorizationId = \is_string($data['authorizationId']) ? $data['authorizationId'] : null;
             return new Response(
                 $this,
                 [],
                 'VOIDED',
-                $data['authorizationId'],
+                $authorizationId,
             );
         } catch (ErrorException $errorException) {
             return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());

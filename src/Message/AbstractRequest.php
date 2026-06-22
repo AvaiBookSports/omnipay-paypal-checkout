@@ -16,7 +16,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     public function getClientId(): string
     {
-        return $this->getParameter('clientId') ?? '';
+        $value = $this->getParameter('clientId');
+        return \is_string($value) ? $value : '';
     }
 
     public function setClientId(string $value): self
@@ -26,7 +27,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     public function getClientSecret(): string
     {
-        return $this->getParameter('clientSecret') ?? '';
+        $value = $this->getParameter('clientSecret');
+        return \is_string($value) ? $value : '';
     }
 
     public function setClientSecret(string $value): self
@@ -36,7 +38,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     public function getBrandName(): ?string
     {
-        return $this->getParameter('brandName');
+        $value = $this->getParameter('brandName');
+        return \is_string($value) ? $value : null;
     }
 
     public function setBrandName(?string $value): self
@@ -67,7 +70,27 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     }
 
     /**
-     * @param list<LinkDescription> $links
+     * @return array<string, mixed>
+     */
+    protected function serializeToArray(\JsonSerializable $jsonSerializable): array
+    {
+        $encoded = \json_encode($jsonSerializable->jsonSerialize());
+        $decoded = \json_decode(false === $encoded ? '{}' : $encoded, true);
+        $result = [];
+        if (\is_array($decoded)) {
+            foreach ($decoded as $key => $value) {
+                // @mago-expect lint:prefer-early-continue
+                if (\is_string($key)) {
+                    $result[$key] = $value;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param LinkDescription[] $links
      */
     protected function findApprovalUrl(array $links): ?string
     {

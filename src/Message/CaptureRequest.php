@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Omnipay\PayPalCheckout\Message;
 
 use PaypalServerSdkLib\Exceptions\ErrorException;
+use PaypalServerSdkLib\Models\CapturedPayment;
 use PaypalServerSdkLib\Models\CaptureRequest as SdkCaptureRequest;
 use PaypalServerSdkLib\Models\Money;
 
@@ -38,7 +39,7 @@ class CaptureRequest extends AbstractRequest
                 'prefer' => 'return=representation',
             ];
 
-            if ($data['amount'] !== null && $data['currency'] !== null) {
+            if (\is_string($data['amount']) && \is_string($data['currency'])) {
                 $captureRequest = new SdkCaptureRequest();
                 $captureRequest->setAmount(new Money($data['currency'], $data['amount']));
                 $options['body'] = $captureRequest;
@@ -50,10 +51,13 @@ class CaptureRequest extends AbstractRequest
                 ->captureAuthorizedPayment($options);
 
             $capture = $apiResponse->getResult();
+            if (!$capture instanceof CapturedPayment) {
+                return new ErrorResponse($this, 'Unexpected API response type', '500');
+            }
 
             return new Response(
                 $this,
-                \json_decode(\json_encode($capture->jsonSerialize()), true),
+                $this->serializeToArray($capture),
                 $capture->getStatus() ?? 'UNKNOWN',
                 $capture->getId(),
                 $capture->getInvoiceId(),

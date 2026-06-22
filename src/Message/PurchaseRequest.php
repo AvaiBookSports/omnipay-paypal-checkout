@@ -8,6 +8,7 @@ use Omnipay\Common\Exception\InvalidResponseException;
 use PaypalServerSdkLib\Exceptions\ErrorException;
 use PaypalServerSdkLib\Models\AmountWithBreakdown;
 use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
+use PaypalServerSdkLib\Models\Order;
 use PaypalServerSdkLib\Models\OrderRequest;
 use PaypalServerSdkLib\Models\PaymentSource;
 use PaypalServerSdkLib\Models\PaypalExperienceUserAction;
@@ -18,6 +19,7 @@ use PaypalServerSdkLib\Models\PurchaseUnitRequest;
 
 /**
  * @see \Omnipay\PayPalCheckout\Tests\Message\PurchaseRequestTest
+ * @mago-expect lint:cyclomatic-complexity
  */
 class PurchaseRequest extends AbstractRequest
 {
@@ -51,30 +53,35 @@ class PurchaseRequest extends AbstractRequest
      */
     public function sendData($data): RedirectResponse|ErrorResponse
     {
+        $intent = \is_string($data['intent']) ? $data['intent'] : '';
+        $returnUrl = \is_string($data['returnUrl']) ? $data['returnUrl'] : null;
+        $cancelUrl = \is_string($data['cancelUrl']) ? $data['cancelUrl'] : null;
+        $brandName = \is_string($data['brandName']) ? $data['brandName'] : null;
+
         $amountWithBreakdown = new AmountWithBreakdown(
-            (string) $data['currency'],
-            (string) $data['amount'],
+            \is_string($data['currency']) ? $data['currency'] : '',
+            \is_string($data['amount']) ? $data['amount'] : '',
         );
 
         $purchaseUnitRequest = new PurchaseUnitRequest($amountWithBreakdown);
-        if ($data['description'] !== null) {
+        if (\is_string($data['description'])) {
             $purchaseUnitRequest->setDescription($data['description']);
         }
 
-        if ($data['transactionId'] !== null) {
+        if (\is_string($data['transactionId'])) {
             $purchaseUnitRequest->setInvoiceId($data['transactionId']);
             $purchaseUnitRequest->setReferenceId($data['transactionId']);
         }
 
-        $orderRequest = new OrderRequest($data['intent'], [$purchaseUnitRequest]);
+        $orderRequest = new OrderRequest($intent, [$purchaseUnitRequest]);
 
         $paypalWalletExperienceContext = new PaypalWalletExperienceContext();
-        $paypalWalletExperienceContext->setReturnUrl($data['returnUrl']);
-        $paypalWalletExperienceContext->setCancelUrl($data['cancelUrl']);
+        $paypalWalletExperienceContext->setReturnUrl($returnUrl);
+        $paypalWalletExperienceContext->setCancelUrl($cancelUrl);
         $paypalWalletExperienceContext->setShippingPreference(PaypalWalletContextShippingPreference::NO_SHIPPING);
         $paypalWalletExperienceContext->setUserAction(PaypalExperienceUserAction::PAY_NOW);
-        if ($data['brandName'] !== null && $data['brandName'] !== '') {
-            $paypalWalletExperienceContext->setBrandName($data['brandName']);
+        if ($brandName !== null && $brandName !== '') {
+            $paypalWalletExperienceContext->setBrandName($brandName);
         }
 
         $paypalWallet = new PaypalWallet();
@@ -92,6 +99,10 @@ class PurchaseRequest extends AbstractRequest
                 ->createOrder(['body' => $orderRequest, 'prefer' => 'return=representation']);
 
             $order = $apiResponse->getResult();
+            if (!$order instanceof Order) {
+                return new ErrorResponse($this, 'Unexpected API response type', '500');
+            }
+
             $orderId = $order->getId();
             $links = $order->getLinks() ?? [];
             $approvalUrl = $this->findApprovalUrl($links);
@@ -102,7 +113,7 @@ class PurchaseRequest extends AbstractRequest
 
             return new RedirectResponse(
                 $this,
-                \json_decode(\json_encode($order->jsonSerialize()), true),
+                $this->serializeToArray($order),
                 $orderId,
                 $approvalUrl,
                 $order->getStatus() ?? 'CREATED',

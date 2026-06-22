@@ -18,7 +18,10 @@ class CompleteAuthorizeRequest extends AbstractRequest
     public function getData(): array
     {
         if (!$this->getTransactionReference()) {
-            $this->setTransactionReference($this->httpRequest->query->get('token'));
+            $token = $this->httpRequest->query->get('token');
+            if ($token !== null) {
+                $this->setTransactionReference($token);
+            }
         }
 
         $this->validate('transactionReference');
@@ -39,17 +42,22 @@ class CompleteAuthorizeRequest extends AbstractRequest
                 ->getOrdersController()
                 ->authorizeOrder(['id' => $data['orderId'], 'prefer' => 'return=representation']);
 
-            /** @var OrderAuthorizeResponse $order */
             $order = $apiResponse->getResult();
+            if (!$order instanceof OrderAuthorizeResponse) {
+                return new ErrorResponse($this, 'Unexpected API response type', '500');
+            }
 
             $authorizationId = $this->extractAuthorizationId($order);
 
+            $purchaseUnits = $order->getPurchaseUnits() ?? [];
+            $firstPurchaseUnit = $purchaseUnits[0] ?? null;
+
             return new Response(
                 $this,
-                \json_decode(\json_encode($order->jsonSerialize()), true),
+                $this->serializeToArray($order),
                 $order->getStatus() ?? 'UNKNOWN',
                 $authorizationId ?? $order->getId(),
-                $order->getPurchaseUnits()[0]?->getInvoiceId(),
+                $firstPurchaseUnit?->getInvoiceId(),
             );
         } catch (ErrorException $errorException) {
             return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());

@@ -6,6 +6,7 @@ namespace Omnipay\PayPalCheckout\Message;
 
 use PaypalServerSdkLib\Exceptions\ErrorException;
 use PaypalServerSdkLib\Models\Money;
+use PaypalServerSdkLib\Models\Refund;
 use PaypalServerSdkLib\Models\RefundRequest as SdkRefundRequest;
 
 /**
@@ -38,7 +39,7 @@ class RefundRequest extends AbstractRequest
                 'prefer' => 'return=representation',
             ];
 
-            if ($data['amount'] !== null && $data['currency'] !== null) {
+            if (\is_string($data['amount']) && \is_string($data['currency'])) {
                 $refundRequest = new SdkRefundRequest();
                 $refundRequest->setAmount(new Money($data['currency'], $data['amount']));
                 $options['body'] = $refundRequest;
@@ -50,10 +51,13 @@ class RefundRequest extends AbstractRequest
                 ->refundCapturedPayment($options);
 
             $refund = $apiResponse->getResult();
+            if (!$refund instanceof Refund) {
+                return new ErrorResponse($this, 'Unexpected API response type', '500');
+            }
 
             return new Response(
                 $this,
-                \json_decode(\json_encode($refund->jsonSerialize()), true),
+                $this->serializeToArray($refund),
                 $refund->getStatus() ?? 'UNKNOWN',
                 $refund->getId(),
                 $refund->getInvoiceId(),

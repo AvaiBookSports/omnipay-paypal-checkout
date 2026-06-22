@@ -46,6 +46,9 @@ class RedirectResponse extends AbstractResponse implements RedirectResponseInter
         return 'GET';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRedirectData(): array
     {
         return [];

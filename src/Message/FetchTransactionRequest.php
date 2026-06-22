@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Omnipay\PayPalCheckout\Message;
 
 use PaypalServerSdkLib\Exceptions\ErrorException;
+use PaypalServerSdkLib\Models\Order;
 
 /**
  * @see \Omnipay\PayPalCheckout\Tests\Message\FetchTransactionRequestTest
@@ -35,13 +36,19 @@ class FetchTransactionRequest extends AbstractRequest
                 ->getOrder(['id' => $data['orderId']]);
 
             $order = $apiResponse->getResult();
+            if (!$order instanceof Order) {
+                return new ErrorResponse($this, 'Unexpected API response type', '500');
+            }
+
+            $purchaseUnits = $order->getPurchaseUnits() ?? [];
+            $firstPurchaseUnit = $purchaseUnits[0] ?? null;
 
             return new Response(
                 $this,
-                \json_decode(\json_encode($order->jsonSerialize()), true),
+                $this->serializeToArray($order),
                 $order->getStatus() ?? 'UNKNOWN',
                 $order->getId(),
-                $order->getPurchaseUnits()[0]?->getInvoiceId(),
+                $firstPurchaseUnit?->getInvoiceId(),
             );
         } catch (ErrorException $errorException) {
             return new ErrorResponse($this, $errorException->getMessage(), (string) $errorException->getCode());

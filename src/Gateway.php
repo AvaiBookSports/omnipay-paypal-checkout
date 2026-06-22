@@ -30,6 +30,9 @@ class Gateway extends AbstractGateway
         return 'PayPalCheckout';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getDefaultParameters(): array
     {
         return [
@@ -42,7 +45,8 @@ class Gateway extends AbstractGateway
 
     public function getClientId(): string
     {
-        return $this->getParameter('clientId') ?? '';
+        $value = $this->getParameter('clientId');
+        return \is_string($value) ? $value : '';
     }
 
     public function setClientId(string $value): self
@@ -52,7 +56,8 @@ class Gateway extends AbstractGateway
 
     public function getClientSecret(): string
     {
-        return $this->getParameter('clientSecret') ?? '';
+        $value = $this->getParameter('clientSecret');
+        return \is_string($value) ? $value : '';
     }
 
     public function setClientSecret(string $value): self
@@ -62,7 +67,8 @@ class Gateway extends AbstractGateway
 
     public function getBrandName(): ?string
     {
-        return $this->getParameter('brandName');
+        $value = $this->getParameter('brandName');
+        return \is_string($value) ? $value : null;
     }
 
     public function setBrandName(?string $value): self
