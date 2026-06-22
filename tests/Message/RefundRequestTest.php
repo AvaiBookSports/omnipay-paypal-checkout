@@ -77,7 +77,7 @@ final class RefundRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->refundRequest, $sdkClient);
 
         $response = $this->refundRequest->sendData($this->refundRequest->getData());
@@ -108,7 +108,7 @@ final class RefundRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->refundRequest, $sdkClient);
 
         $response = $this->refundRequest->sendData($this->refundRequest->getData());

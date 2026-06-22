@@ -58,7 +58,7 @@ final class VoidRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->voidRequest, $sdkClient);
 
         $response = $this->voidRequest->sendData($this->voidRequest->getData());
@@ -89,7 +89,7 @@ final class VoidRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->voidRequest, $sdkClient);
 
         $response = $this->voidRequest->sendData($this->voidRequest->getData());

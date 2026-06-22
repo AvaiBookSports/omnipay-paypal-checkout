@@ -77,7 +77,7 @@ final class CompleteAuthorizeRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->completeAuthorizeRequest, $sdkClient);
 
         $response = $this->completeAuthorizeRequest->sendData($this->completeAuthorizeRequest->getData());
@@ -104,7 +104,7 @@ final class CompleteAuthorizeRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->completeAuthorizeRequest, $sdkClient);
 
         $response = $this->completeAuthorizeRequest->sendData($this->completeAuthorizeRequest->getData());
@@ -131,7 +131,7 @@ final class CompleteAuthorizeRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getOrdersController')->willReturn($ordersController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->completeAuthorizeRequest, $sdkClient);
 
         $response = $this->completeAuthorizeRequest->sendData($this->completeAuthorizeRequest->getData());

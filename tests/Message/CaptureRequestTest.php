@@ -77,7 +77,7 @@ final class CaptureRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->captureRequest, $sdkClient);
 
         $response = $this->captureRequest->sendData($this->captureRequest->getData());
@@ -108,7 +108,7 @@ final class CaptureRequestTest extends TestCase
         $sdkClient = $this->createMock(PaypalServerSdkClient::class);
         $sdkClient->method('getPaymentsController')->willReturn($paymentsController);
 
-        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'sdkClient');
+        $reflectionProperty = new ReflectionProperty(AbstractRequest::class, 'paypalServerSdkClient');
         $reflectionProperty->setValue($this->captureRequest, $sdkClient);
 
         $response = $this->captureRequest->sendData($this->captureRequest->getData());
