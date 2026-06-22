@@ -8,6 +8,9 @@ use PaypalServerSdkLib\Exceptions\ErrorException;
 use PaypalServerSdkLib\Models\CaptureRequest as SdkCaptureRequest;
 use PaypalServerSdkLib\Models\Money;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\CaptureRequestTest
+ */
 class CaptureRequest extends AbstractRequest
 {
     /**

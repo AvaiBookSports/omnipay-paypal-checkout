@@ -16,6 +16,9 @@ use PaypalServerSdkLib\Models\PaypalWalletContextShippingPreference;
 use PaypalServerSdkLib\Models\PaypalWalletExperienceContext;
 use PaypalServerSdkLib\Models\PurchaseUnitRequest;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\PurchaseRequestTest
+ */
 class PurchaseRequest extends AbstractRequest
 {
     protected function getIntent(): string

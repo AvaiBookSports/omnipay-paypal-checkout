@@ -8,6 +8,9 @@ use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Common\Message\RequestInterface;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\RedirectResponseTest
+ */
 class RedirectResponse extends AbstractResponse implements RedirectResponseInterface
 {
     /**

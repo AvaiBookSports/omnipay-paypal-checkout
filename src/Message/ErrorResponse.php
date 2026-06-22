@@ -7,6 +7,9 @@ namespace Omnipay\PayPalCheckout\Message;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\ErrorResponseTest
+ */
 class ErrorResponse extends AbstractResponse
 {
     public function __construct(

@@ -8,6 +8,9 @@ use PaypalServerSdkLib\Exceptions\ErrorException;
 use PaypalServerSdkLib\Models\Money;
 use PaypalServerSdkLib\Models\RefundRequest as SdkRefundRequest;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\RefundRequestTest
+ */
 class RefundRequest extends AbstractRequest
 {
     /**

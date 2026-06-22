@@ -8,6 +8,9 @@ use Omnipay\Common\Message\RequestInterface;
 use Omnipay\PayPalCheckout\Message\Response;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @mago-expect lint:too-many-methods
+ */
 final class ResponseTest extends TestCase
 {
     protected function setUp(): void {}

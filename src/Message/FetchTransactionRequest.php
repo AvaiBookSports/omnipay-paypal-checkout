@@ -6,6 +6,9 @@ namespace Omnipay\PayPalCheckout\Message;
 
 use PaypalServerSdkLib\Exceptions\ErrorException;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\FetchTransactionRequestTest
+ */
 class FetchTransactionRequest extends AbstractRequest
 {
     /**

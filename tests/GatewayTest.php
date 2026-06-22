@@ -15,6 +15,9 @@ use Omnipay\PayPalCheckout\Message\RefundRequest;
 use Omnipay\PayPalCheckout\Message\VoidRequest;
 use Omnipay\Tests\GatewayTestCase;
 
+/**
+ * @mago-expect lint:too-many-methods
+ */
 final class GatewayTest extends GatewayTestCase
 {
     protected function setUp(): void

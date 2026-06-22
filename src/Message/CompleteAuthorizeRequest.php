@@ -7,6 +7,9 @@ namespace Omnipay\PayPalCheckout\Message;
 use PaypalServerSdkLib\Exceptions\ErrorException;
 use PaypalServerSdkLib\Models\OrderAuthorizeResponse;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\CompleteAuthorizeRequestTest
+ */
 class CompleteAuthorizeRequest extends AbstractRequest
 {
     /**

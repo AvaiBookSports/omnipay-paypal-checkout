@@ -6,6 +6,7 @@ namespace Omnipay\PayPalCheckout\Message;
 
 use PaypalServerSdkLib\Authentication\ClientCredentialsAuthCredentialsBuilder;
 use PaypalServerSdkLib\Environment;
+use PaypalServerSdkLib\Models\LinkDescription;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use PaypalServerSdkLib\PaypalServerSdkClientBuilder;
 
@@ -43,9 +44,12 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->setParameter('brandName', $value);
     }
 
+    /**
+     * @mago-expect lint:halstead
+     */
     protected function getSdkClient(): PaypalServerSdkClient
     {
-        if ($this->paypalServerSdkClient instanceof \PaypalServerSdkLib\PaypalServerSdkClient) {
+        if ($this->paypalServerSdkClient instanceof PaypalServerSdkClient) {
             return $this->paypalServerSdkClient;
         }
 
@@ -63,7 +67,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     }
 
     /**
-     * @param list<\PaypalServerSdkLib\Models\LinkDescription> $links
+     * @param list<LinkDescription> $links
      */
     protected function findApprovalUrl(array $links): ?string
     {

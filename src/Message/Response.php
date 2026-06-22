@@ -7,10 +7,14 @@ namespace Omnipay\PayPalCheckout\Message;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\Message\ResponseTest
+ */
 class Response extends AbstractResponse
 {
     /**
      * @param array<string, mixed> $data
+     * @mago-expect lint:excessive-parameter-list
      */
     public function __construct(
         RequestInterface $request,

@@ -14,6 +14,10 @@ use Omnipay\PayPalCheckout\Message\PurchaseRequest;
 use Omnipay\PayPalCheckout\Message\RefundRequest;
 use Omnipay\PayPalCheckout\Message\VoidRequest;
 
+/**
+ * @see \Omnipay\PayPalCheckout\Tests\GatewayTest
+ * @mago-expect lint:too-many-methods
+ */
 class Gateway extends AbstractGateway
 {
     public function getName(): string
